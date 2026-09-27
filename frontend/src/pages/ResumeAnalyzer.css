@@ -1,0 +1,313 @@
+/* ============================================================
+   RESUME ANALYZER PAGE
+   ============================================================ */
+
+.analyzer-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding: 50px 40px;
+  box-sizing: border-box;
+}
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.analyzer-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.analyzer-header h1 {
+  margin: 0;
+  font-size: 38px;
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+.analyzer-header p {
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 17px;
+}
+
+
+/* ============================================================
+   UPLOAD CARD
+   ============================================================ */
+
+.upload-card {
+  max-width: 800px;
+  margin: 0 auto 40px auto;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+.upload-icon {
+  font-size: 55px;
+  margin-bottom: 15px;
+}
+
+.upload-card h2 {
+  margin: 0 0 10px 0;
+  color: #1e293b;
+  font-size: 26px;
+}
+
+.upload-card > p {
+  color: #64748b;
+  margin-bottom: 25px;
+}
+
+
+/* ============================================================
+   FILE INPUT
+   ============================================================ */
+
+.upload-card input[type="file"] {
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 20px auto;
+  padding: 12px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  box-sizing: border-box;
+  cursor: pointer;
+  color: #475569;
+}
+
+.upload-card input[type="file"]:hover {
+  border-color: #4f46e5;
+  background: #f5f3ff;
+}
+
+
+/* ============================================================
+   SELECTED FILE
+   ============================================================ */
+
+.upload-card strong {
+  color: #4f46e5;
+}
+
+
+/* ============================================================
+   ANALYZE BUTTON
+   ============================================================ */
+
+.analyze-btn {
+  border: none;
+  background: #4f46e5;
+  color: white;
+  padding: 14px 30px;
+  border-radius: 9px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.analyze-btn:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+.analyze-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* ============================================================
+   RESULTS SECTION
+   ============================================================ */
+
+.results-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 25px;
+}
+
+
+/* ============================================================
+   SCORE CARD
+   ============================================================ */
+
+.score-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(15, 23, 42, 0.05);
+}
+
+.score-card h2 {
+  margin-top: 0;
+  color: #1e293b;
+}
+
+.score {
+  width: 130px;
+  height: 130px;
+  margin: 25px auto;
+  border-radius: 50%;
+  background: #eef2ff;
+  border: 8px solid #4f46e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4f46e5;
+  font-size: 42px;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+.score-card p {
+  color: #64748b;
+}
+
+
+/* ============================================================
+   RESULT CARDS
+   ============================================================ */
+
+.result-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 5px 15px rgba(15, 23, 42, 0.05);
+}
+
+.result-card h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #1e293b;
+  font-size: 23px;
+}
+
+
+/* ============================================================
+   LISTS
+   ============================================================ */
+
+.result-card ul {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.result-card li {
+  margin-bottom: 12px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.result-card p {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+
+/* ============================================================
+   AI FEEDBACK
+   ============================================================ */
+
+.ai-feedback-card {
+  grid-column: 1 / -1;
+}
+
+.ai-feedback {
+  background: #f8fafc;
+  border-left: 4px solid #4f46e5;
+  border-radius: 8px;
+  padding: 20px;
+  color: #475569;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+
+/* ============================================================
+   EXTRACTED RESUME TEXT
+   ============================================================ */
+
+.resume-text-card {
+  grid-column: 1 / -1;
+}
+
+.resume-text {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 20px;
+  min-height: 150px;
+  max-height: 500px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #475569;
+  line-height: 1.7;
+}
+
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 800px) {
+  .analyzer-page {
+    padding: 30px 20px;
+  }
+
+  .analyzer-header h1 {
+    font-size: 30px;
+  }
+
+  .upload-card {
+    padding: 25px 20px;
+  }
+
+  .results-section {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-feedback-card,
+  .resume-text-card {
+    grid-column: auto;
+  }
+}
+
+
+/* ============================================================
+   SMALL MOBILE
+   ============================================================ */
+
+@media (max-width: 500px) {
+  .analyzer-page {
+    padding: 25px 15px;
+  }
+
+  .upload-card {
+    padding: 25px 15px;
+  }
+
+  .upload-card input[type="file"] {
+    font-size: 13px;
+  }
+
+  .score {
+    width: 110px;
+    height: 110px;
+    font-size: 35px;
+  }
+}

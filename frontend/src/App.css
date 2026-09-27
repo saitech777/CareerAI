@@ -1,0 +1,756 @@
+/* =========================================================
+   CareerAI - Main Dashboard
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f7fb;
+  color: #172033;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* =========================================================
+   APP
+   ========================================================= */
+
+.app {
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
+.navbar {
+  height: 72px;
+  padding: 0 7%;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: 800;
+  color: #172033;
+  cursor: pointer;
+  letter-spacing: -1px;
+}
+
+.logo span {
+  color: #5146e5;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-links button {
+  border: none;
+  background: transparent;
+  color: #344054;
+
+  padding: 10px 16px;
+  border-radius: 8px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  transition: 0.2s ease;
+}
+
+.nav-links button:hover {
+  background: #f0efff;
+  color: #5146e5;
+}
+
+.nav-links .nav-dashboard-btn {
+  color: #5146e5;
+  background: #f0efff;
+}
+
+.nav-links .profile-btn {
+  background: #5146e5;
+  color: white;
+}
+
+.nav-links .profile-btn:hover {
+  background: #4038c9;
+  color: white;
+}
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.dashboard {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 45px 6% 0;
+}
+
+/* =========================================================
+   WELCOME / HERO
+   ========================================================= */
+
+.welcome {
+  min-height: 380px;
+
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #f3f1ff 100%
+  );
+
+  border: 1px solid #e2e5ef;
+  border-radius: 24px;
+
+  padding: 55px 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 40px;
+
+  box-shadow: 0 10px 35px rgba(30, 40, 80, 0.06);
+}
+
+.welcome-content {
+  max-width: 750px;
+}
+
+.welcome-label {
+  margin: 0 0 16px;
+
+  color: #5146e5;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+.welcome h1 {
+  margin: 0;
+
+  font-size: 48px;
+  line-height: 1.15;
+
+  color: #172033;
+}
+
+.welcome h2 {
+  margin: 18px 0 12px;
+
+  font-size: 27px;
+  color: #263247;
+}
+
+.welcome h2 span {
+  color: #5146e5;
+}
+
+.welcome-text {
+  max-width: 680px;
+
+  margin: 0;
+
+  color: #667085;
+
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.welcome-actions {
+  margin-top: 30px;
+
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.primary-btn,
+.secondary-btn {
+  border-radius: 10px;
+  padding: 14px 24px;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  transition: 0.2s ease;
+}
+
+.primary-btn {
+  border: none;
+  background: #5146e5;
+  color: white;
+}
+
+.primary-btn:hover {
+  background: #4038c9;
+  transform: translateY(-2px);
+}
+
+.secondary-btn {
+  border: 1px solid #5146e5;
+  background: white;
+  color: #5146e5;
+}
+
+.secondary-btn:hover {
+  background: #f0efff;
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   AI VISUAL
+   ========================================================= */
+
+.welcome-visual {
+  min-width: 260px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  color: #5146e5;
+}
+
+.ai-circle {
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #5146e5,
+    #7c72f2
+  );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 65px;
+
+  box-shadow:
+    0 20px 45px rgba(81, 70, 229, 0.25);
+}
+
+.welcome-visual p {
+  margin-top: 18px;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  color: #475467;
+}
+
+/* =========================================================
+   DASHBOARD OVERVIEW
+   ========================================================= */
+
+.dashboard-overview {
+  margin-top: 30px;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.overview-card {
+  background: white;
+
+  border: 1px solid #e2e5ef;
+  border-radius: 16px;
+
+  padding: 22px;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  transition: 0.25s ease;
+
+  box-shadow: 0 5px 20px rgba(30, 40, 80, 0.04);
+}
+
+.overview-card:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 12px 30px rgba(30, 40, 80, 0.09);
+}
+
+.overview-icon {
+  width: 52px;
+  height: 52px;
+
+  border-radius: 12px;
+
+  background: #f0efff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 25px;
+}
+
+.overview-card h3 {
+  margin: 0 0 6px;
+
+  font-size: 16px;
+  color: #172033;
+}
+
+.overview-card p {
+  margin: 0;
+
+  font-size: 13px;
+  color: #667085;
+}
+
+/* =========================================================
+   SECTION HEADINGS
+   ========================================================= */
+
+.section-heading {
+  margin-bottom: 28px;
+}
+
+.section-label {
+  margin: 0 0 8px;
+
+  color: #5146e5;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  letter-spacing: 1.8px;
+}
+
+.section-heading h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 30px;
+}
+
+.section-heading > p:last-child {
+  margin-top: 10px;
+
+  color: #667085;
+
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
+
+.quick-actions {
+  margin-top: 65px;
+
+  background: white;
+
+  border: 1px solid #e2e5ef;
+  border-radius: 20px;
+
+  padding: 35px;
+
+  box-shadow: 0 5px 20px rgba(30, 40, 80, 0.04);
+}
+
+.quick-action-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.quick-action-buttons button {
+  border: 1px solid #e0e3ec;
+
+  background: #f9fafc;
+
+  color: #263247;
+
+  padding: 17px;
+
+  border-radius: 10px;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  transition: 0.2s ease;
+}
+
+.quick-action-buttons button:hover {
+  background: #f0efff;
+  border-color: #5146e5;
+  color: #5146e5;
+
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   FEATURES
+   ========================================================= */
+
+.features-section {
+  margin-top: 65px;
+}
+
+.cards {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 24px;
+}
+
+.card {
+  background: #ffffff;
+
+  border: 1px solid #e2e5ef;
+  border-radius: 18px;
+
+  padding: 30px;
+
+  min-height: 290px;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow:
+    0 6px 22px rgba(30, 40, 80, 0.045);
+
+  transition: 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+
+  border-color: #d4d0ff;
+
+  box-shadow:
+    0 15px 35px rgba(30, 40, 80, 0.1);
+}
+
+.card .icon {
+  width: 58px;
+  height: 58px;
+
+  border-radius: 14px;
+
+  background: #f0efff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 28px;
+
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  margin: 0 0 12px;
+
+  font-size: 21px;
+
+  color: #172033;
+}
+
+.card p {
+  margin: 0;
+
+  color: #667085;
+
+  line-height: 1.65;
+
+  font-size: 15px;
+}
+
+.card button {
+  margin-top: auto;
+
+  padding: 12px 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #5146e5;
+
+  text-align: left;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.card button:hover {
+  color: #4038c9;
+}
+
+/* =========================================================
+   HOW IT WORKS
+   ========================================================= */
+
+.how-it-works {
+  margin-top: 70px;
+
+  background: white;
+
+  border: 1px solid #e2e5ef;
+  border-radius: 20px;
+
+  padding: 40px;
+}
+
+.steps {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 20px;
+}
+
+.step {
+  text-align: center;
+
+  padding: 15px;
+}
+
+.step-number {
+  width: 48px;
+  height: 48px;
+
+  margin: 0 auto 15px;
+
+  border-radius: 50%;
+
+  background: #5146e5;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.step h3 {
+  margin: 0 0 8px;
+
+  color: #172033;
+
+  font-size: 18px;
+}
+
+.step p {
+  margin: 0;
+
+  color: #667085;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.dashboard-footer {
+  margin-top: 70px;
+
+  padding: 40px 20px;
+
+  border-top: 1px solid #e2e5ef;
+
+  text-align: center;
+}
+
+.dashboard-footer h3 {
+  margin: 0 0 10px;
+
+  font-size: 25px;
+
+  color: #172033;
+}
+
+.dashboard-footer h3 span {
+  color: #5146e5;
+}
+
+.dashboard-footer p {
+  margin: 6px 0;
+
+  color: #667085;
+}
+
+.dashboard-footer .footer-copy {
+  margin-top: 20px;
+
+  font-size: 13px;
+
+  color: #98a2b3;
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .dashboard {
+    padding-left: 4%;
+    padding-right: 4%;
+  }
+
+  .welcome {
+    padding: 45px;
+  }
+
+  .dashboard-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 750px) {
+
+  .navbar {
+    padding: 0 20px;
+  }
+
+  .logo {
+    font-size: 24px;
+  }
+
+  .nav-links {
+    gap: 4px;
+  }
+
+  .nav-links button {
+    padding: 8px 9px;
+    font-size: 13px;
+  }
+
+  .dashboard {
+    padding: 25px 18px 0;
+  }
+
+  .welcome {
+    padding: 35px 25px;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .welcome h1 {
+    font-size: 38px;
+  }
+
+  .welcome h2 {
+    font-size: 23px;
+  }
+
+  .welcome-text {
+    font-size: 16px;
+  }
+
+  .welcome-visual {
+    width: 100%;
+  }
+
+  .dashboard-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-action-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-actions,
+  .how-it-works {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .navbar {
+    height: auto;
+    min-height: 65px;
+
+    padding: 12px 15px;
+
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .welcome h1 {
+    font-size: 32px;
+  }
+
+  .welcome h2 {
+    font-size: 21px;
+  }
+
+  .welcome-actions {
+    flex-direction: column;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    width: 100%;
+  }
+}

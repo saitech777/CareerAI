@@ -1,0 +1,300 @@
+.mock-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding: 50px 40px;
+}
+
+
+/* Header */
+
+.mock-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.mock-header h1 {
+  margin: 0;
+  font-size: 38px;
+  color: #4f46e5;
+}
+
+.mock-header p {
+  color: #64748b;
+  font-size: 17px;
+  margin-top: 10px;
+}
+
+
+/* Setup */
+
+.mock-setup {
+  max-width: 650px;
+  margin: auto;
+}
+
+.mock-card {
+  background: white;
+  padding: 35px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.mock-card h2 {
+  margin-top: 0;
+  color: #1e293b;
+  text-align: center;
+}
+
+.mock-card p {
+  color: #64748b;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+
+/* Labels */
+
+.mock-card label {
+  display: block;
+  color: #334155;
+  font-weight: 600;
+  margin-bottom: 8px;
+  margin-top: 20px;
+}
+
+
+/* Inputs */
+
+.mock-card input,
+.mock-card select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.mock-card input:focus,
+.mock-card select:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+
+/* Start Button */
+
+.start-interview-btn {
+  width: 100%;
+  margin-top: 30px;
+  border: none;
+  background: #4f46e5;
+  color: white;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.start-interview-btn:hover {
+  background: #4338ca;
+}
+
+
+/* Interview Section */
+
+.mock-interview-section {
+  max-width: 900px;
+  margin: auto;
+}
+
+
+/* Interview Info */
+
+.interview-info {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px 22px;
+  display: flex;
+  justify-content: space-between;
+  color: #475569;
+  margin-bottom: 20px;
+}
+
+
+/* Question */
+
+.question-box {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 30px;
+  margin-bottom: 20px;
+}
+
+.question-label {
+  color: #4f46e5;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.question-box h2 {
+  color: #1e293b;
+  font-size: 21px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+
+/* Answer */
+
+.answer-box {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 30px;
+}
+
+.answer-box h2 {
+  color: #1e293b;
+  margin-top: 0;
+}
+
+.answer-box textarea {
+  width: 100%;
+  min-height: 180px;
+  box-sizing: border-box;
+  padding: 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.answer-box textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+
+/* Submit Answer */
+
+.submit-answer-btn {
+  margin-top: 15px;
+  border: none;
+  background: #4f46e5;
+  color: white;
+  padding: 13px 25px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.submit-answer-btn:hover {
+  background: #4338ca;
+}
+
+
+/* Feedback */
+
+.feedback-box {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 30px;
+  margin-top: 20px;
+}
+
+.feedback-box h2 {
+  color: #4f46e5;
+  margin-top: 0;
+}
+
+.feedback-box p {
+  color: #475569;
+  line-height: 1.7;
+}
+
+
+/* End Interview */
+
+.end-interview-container {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.end-interview-btn {
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #475569;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.end-interview-btn:hover {
+  background: #f1f5f9;
+}
+
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+  .mock-page {
+    padding: 30px 20px;
+  }
+
+  .mock-header h1 {
+    font-size: 30px;
+  }
+
+  .interview-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+}
+.feedback-score {
+  font-size: 45px;
+  font-weight: bold;
+  color: #4f46e5;
+  margin: 15px 0 25px;
+}
+
+.feedback-score span {
+  font-size: 20px;
+  color: #64748b;
+  margin-left: 5px;
+}
+
+.feedback-section {
+  margin-top: 25px;
+}
+
+.feedback-section h3 {
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.feedback-section p {
+  color: #475569;
+  line-height: 1.7;
+}
+
+.feedback-section li {
+  color: #475569;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.submit-answer-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}

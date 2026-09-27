@@ -1,0 +1,247 @@
+.interview-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding: 50px 40px;
+}
+
+/* Header */
+
+.interview-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.interview-header h1 {
+  margin: 0;
+  font-size: 38px;
+  color: #4f46e5;
+}
+
+.interview-header p {
+  color: #64748b;
+  font-size: 17px;
+  margin-top: 10px;
+}
+
+
+/* Input Section */
+
+.interview-input-section {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+
+/* Cards */
+
+.interview-card {
+  background: white;
+  padding: 30px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.interview-card h2 {
+  color: #1e293b;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.interview-card p {
+  color: #64748b;
+  margin-bottom: 15px;
+}
+
+
+/* Input */
+
+.interview-card input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.interview-card input:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+
+/* Select */
+
+.interview-card select {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+.interview-card select:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+
+/* Job Description */
+
+.job-description-card {
+  grid-column: 1 / -1;
+}
+
+.interview-card textarea {
+  width: 100%;
+  min-height: 220px;
+  box-sizing: border-box;
+  padding: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.interview-card textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+
+/* Generate Button */
+
+.generate-button-container {
+  text-align: center;
+  margin: 30px 0 45px;
+}
+
+.generate-btn {
+  border: none;
+  background: #4f46e5;
+  color: white;
+  padding: 14px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.generate-btn:hover {
+  background: #4338ca;
+}
+
+.generate-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+
+/* Questions Section */
+
+.questions-section {
+  max-width: 1100px;
+  margin: auto;
+}
+
+.questions-section h2 {
+  text-align: center;
+  color: #1e293b;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.questions-subtitle {
+  text-align: center;
+  color: #64748b;
+  margin-bottom: 25px;
+}
+
+
+/* Questions List */
+
+.questions-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+
+/* Individual Question */
+
+.question-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 22px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  transition: transform 0.2s ease;
+}
+
+.question-card:hover {
+  transform: translateY(-2px);
+}
+
+
+/* Question Number */
+
+.question-number {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+
+/* Question Text */
+
+.question-text {
+  color: #334155;
+  font-size: 15px;
+  line-height: 1.6;
+  padding-top: 6px;
+}
+
+
+/* Mobile Responsive */
+
+@media (max-width: 800px) {
+
+  .interview-page {
+    padding: 30px 20px;
+  }
+
+  .interview-input-section {
+    grid-template-columns: 1fr;
+  }
+
+  .job-description-card {
+    grid-column: auto;
+  }
+
+  .questions-list {
+    grid-template-columns: 1fr;
+  }
+
+  .interview-header h1 {
+    font-size: 30px;
+  }
+
+}

@@ -1,0 +1,567 @@
+/* =========================================
+   MY RESUMES PAGE
+========================================= */
+
+.my-resumes-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding: 50px 60px 80px;
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.my-resumes-header {
+  text-align: center;
+  margin-bottom: 45px;
+}
+
+.my-resumes-header h1 {
+  margin: 0;
+  color: #4f46e5;
+  font-size: 42px;
+  font-weight: 700;
+}
+
+.my-resumes-header p {
+  margin-top: 12px;
+  color: #64748b;
+  font-size: 17px;
+}
+
+
+/* =========================================
+   RESUME GRID
+========================================= */
+
+.resumes-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(360px, 1fr)
+  );
+
+  gap: 30px;
+}
+
+
+/* =========================================
+   RESUME CARD
+========================================= */
+
+.resume-card {
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+
+  padding: 28px;
+
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.06);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 420px;
+}
+
+.resume-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 15px 35px rgba(15, 23, 42, 0.12);
+}
+
+
+/* =========================================
+   DOCUMENT ICON
+========================================= */
+
+.resume-card-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ede9fe;
+
+  border-radius: 12px;
+
+  font-size: 27px;
+
+  margin-bottom: 18px;
+}
+
+
+/* =========================================
+   RESUME CONTENT
+========================================= */
+
+.resume-card-content h2 {
+  margin: 0 0 10px;
+
+  color: #1e293b;
+
+  font-size: 23px;
+
+  line-height: 1.3;
+}
+
+.resume-id {
+  margin: 5px 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+.resume-date {
+  margin: 5px 0 18px;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   CONTENT PREVIEW
+========================================= */
+
+.resume-content-preview {
+  background: #f8fafc;
+
+  border: 1px solid #eef2f7;
+
+  border-radius: 12px;
+
+  padding: 18px;
+
+  margin-top: 15px;
+
+  min-height: 95px;
+
+  color: #475569;
+
+  font-size: 15px;
+
+  line-height: 1.65;
+
+  overflow: hidden;
+}
+
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.resume-actions {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 10px;
+
+  margin-top: auto;
+
+  padding-top: 25px;
+}
+
+
+/* =========================================
+   COMMON BUTTON
+========================================= */
+
+.resume-actions button {
+  border: none;
+
+  border-radius: 9px;
+
+  padding: 13px 10px;
+
+  font-size: 14px;
+
+  font-family: inherit;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    background 0.2s ease;
+}
+
+.resume-actions button:hover {
+  transform: translateY(-2px);
+}
+
+
+/* =========================================
+   VIEW BUTTON
+========================================= */
+
+.view-resume-btn {
+  background: #4f46e5;
+
+  color: white;
+}
+
+.view-resume-btn:hover {
+  background: #4338ca;
+}
+
+
+/* =========================================
+   EDIT BUTTON
+========================================= */
+
+.edit-resume-btn {
+  background: #0f766e;
+
+  color: white;
+}
+
+.edit-resume-btn:hover {
+  background: #115e59;
+}
+
+
+/* =========================================
+   DELETE BUTTON
+========================================= */
+
+.delete-resume-btn {
+  grid-column: 1 / -1;
+
+  background: #ef4444;
+
+  color: white;
+}
+
+.delete-resume-btn:hover {
+  background: #dc2626;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.loading-message {
+  max-width: 600px;
+
+  margin: 80px auto;
+
+  background: white;
+
+  border-radius: 16px;
+
+  padding: 45px;
+
+  text-align: center;
+
+  border: 1px solid #e2e8f0;
+
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.06);
+}
+
+.loading-message h2 {
+  margin: 0;
+
+  color: #4f46e5;
+}
+
+.loading-message p {
+  color: #64748b;
+
+  margin-top: 10px;
+}
+
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.empty-resumes {
+  max-width: 600px;
+
+  margin: 70px auto;
+
+  background: white;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 18px;
+
+  padding: 60px 30px;
+
+  text-align: center;
+
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.06);
+}
+
+.empty-icon {
+  font-size: 55px;
+
+  margin-bottom: 15px;
+}
+
+.empty-resumes h2 {
+  color: #1e293b;
+
+  margin-bottom: 10px;
+}
+
+.empty-resumes p {
+  color: #64748b;
+}
+
+
+/* =========================================
+   EDIT RESUME CARD
+========================================= */
+
+.edit-resume-card {
+  max-width: 900px;
+
+  margin: 0 auto 40px;
+
+  background: white;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 18px;
+
+  padding: 30px;
+
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+.edit-resume-card h2 {
+  margin-top: 0;
+
+  color: #4f46e5;
+
+  font-size: 25px;
+}
+
+.edit-resume-card p {
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   EDIT LABELS
+========================================= */
+
+.edit-resume-card label {
+  display: block;
+
+  margin-top: 20px;
+
+  margin-bottom: 8px;
+
+  color: #334155;
+
+  font-weight: 600;
+}
+
+
+/* =========================================
+   EDIT INPUT
+========================================= */
+
+.edit-resume-card input,
+.edit-resume-card textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border: 1px solid #cbd5e1;
+
+  border-radius: 9px;
+
+  padding: 13px;
+
+  font-family: inherit;
+
+  font-size: 15px;
+
+  color: #1e293b;
+
+  background: white;
+}
+
+.edit-resume-card textarea {
+  min-height: 220px;
+
+  resize: vertical;
+
+  line-height: 1.6;
+}
+
+.edit-resume-card input:focus,
+.edit-resume-card textarea:focus {
+  outline: none;
+
+  border-color: #4f46e5;
+
+  box-shadow:
+    0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+
+/* =========================================
+   EDIT BUTTONS
+========================================= */
+
+.edit-buttons {
+  display: flex;
+
+  gap: 12px;
+
+  margin-top: 25px;
+}
+
+.save-edit-btn,
+.cancel-edit-button {
+  border: none;
+
+  border-radius: 9px;
+
+  padding: 13px 22px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  font-family: inherit;
+
+  cursor: pointer;
+}
+
+.save-edit-btn {
+  background: #4f46e5;
+
+  color: white;
+}
+
+.save-edit-btn:hover {
+  background: #4338ca;
+}
+
+.cancel-edit-button {
+  background: #e2e8f0;
+
+  color: #334155;
+}
+
+.cancel-edit-button:hover {
+  background: #cbd5e1;
+}
+
+
+/* =========================================
+   DISABLED BUTTON
+========================================= */
+
+.resume-actions button:disabled,
+.edit-buttons button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 900px) {
+
+  .my-resumes-page {
+    padding: 40px 25px 60px;
+  }
+
+  .my-resumes-header h1 {
+    font-size: 34px;
+  }
+
+  .resumes-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 600px) {
+
+  .my-resumes-page {
+    padding: 30px 15px 50px;
+  }
+
+  .my-resumes-header {
+    margin-bottom: 30px;
+  }
+
+  .my-resumes-header h1 {
+    font-size: 30px;
+  }
+
+  .my-resumes-header p {
+    font-size: 15px;
+  }
+
+  .resume-card {
+    padding: 22px;
+
+    min-height: auto;
+  }
+
+  .resume-card-content h2 {
+    font-size: 20px;
+  }
+
+  .resume-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .delete-resume-btn {
+    grid-column: auto;
+  }
+
+  .edit-resume-card {
+    padding: 22px;
+  }
+
+  .edit-buttons {
+    flex-direction: column;
+  }
+
+  .save-edit-btn,
+  .cancel-edit-button {
+    width: 100%;
+  }
+}
