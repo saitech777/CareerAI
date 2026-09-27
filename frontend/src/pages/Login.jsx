@@ -13,21 +13,24 @@ function Login({ onRegister, onLoginSuccess }) {
     formData.append("password", password);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/login", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/login`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
 
       if (data.success) {
-  localStorage.setItem("token", data.token);
-  localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
-  alert("Login successful!");
+        alert("Login successful!");
 
-  onLoginSuccess();
-}else {
+        onLoginSuccess();
+      } else {
         alert(data.message);
       }
     } catch (error) {
@@ -61,15 +64,17 @@ function Login({ onRegister, onLoginSuccess }) {
 
           <button type="submit">Login</button>
         </form>
+
         <p className="register-link">
-  Don't have an account?{" "}
-  <button type="button" onClick={onRegister}>
-    Create an account
-  </button>
-</p>
+          Don't have an account?{" "}
+          <button type="button" onClick={onRegister}>
+            Create an account
+          </button>
+        </p>
       </div>
     </div>
   );
 }
 
 export default Login;
+

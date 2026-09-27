@@ -71,7 +71,7 @@ ${resume.certifications}
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/test-resume",
+        `${import.meta.env.VITE_API_URL}/test-resume`,
         {
           method: "POST",
 
@@ -194,7 +194,6 @@ ${resume.certifications}
 
       </div>
 
-
       <div className="builder-container">
 
         {/* FORM */}
@@ -237,7 +236,6 @@ ${resume.certifications}
             onChange={handleChange}
           />
 
-
           <h2>
             Professional Summary
           </h2>
@@ -248,7 +246,6 @@ ${resume.certifications}
             value={resume.summary}
             onChange={handleChange}
           />
-
 
           <h2>
             Skills
@@ -261,7 +258,6 @@ ${resume.certifications}
             onChange={handleChange}
           />
 
-
           <h2>
             Education
           </h2>
@@ -272,7 +268,6 @@ ${resume.certifications}
             value={resume.education}
             onChange={handleChange}
           />
-
 
           <h2>
             Experience
@@ -285,7 +280,6 @@ ${resume.certifications}
             onChange={handleChange}
           />
 
-
           <h2>
             Projects
           </h2>
@@ -296,7 +290,6 @@ ${resume.certifications}
             value={resume.projects}
             onChange={handleChange}
           />
-
 
           <h2>
             Certifications
@@ -310,7 +303,6 @@ ${resume.certifications}
           />
 
         </div>
-
 
         {/* PREVIEW */}
 
@@ -338,7 +330,6 @@ ${resume.certifications}
 
           <hr />
 
-
           {resume.summary && (
             <>
               <h2>
@@ -350,7 +341,6 @@ ${resume.certifications}
               </p>
             </>
           )}
-
 
           {resume.skills && (
             <>
@@ -364,7 +354,6 @@ ${resume.certifications}
             </>
           )}
 
-
           {resume.education && (
             <>
               <h2>
@@ -376,7 +365,6 @@ ${resume.certifications}
               </p>
             </>
           )}
-
 
           {resume.experience && (
             <>
@@ -390,7 +378,6 @@ ${resume.certifications}
             </>
           )}
 
-
           {resume.projects && (
             <>
               <h2>
@@ -402,7 +389,6 @@ ${resume.certifications}
               </p>
             </>
           )}
-
 
           {resume.certifications && (
             <>
@@ -416,7 +402,6 @@ ${resume.certifications}
             </>
           )}
 
-
           {/* SAVE BUTTON */}
 
           <button
@@ -428,7 +413,6 @@ ${resume.certifications}
               ? "Saving..."
               : "💾 Save Resume"}
           </button>
-
 
           {/* DOWNLOAD BUTTON */}
 
@@ -448,3 +432,4 @@ ${resume.certifications}
 }
 
 export default ResumeBuilder
+

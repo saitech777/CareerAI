@@ -6,158 +6,115 @@ function MockInterview() {
   const [experienceLevel, setExperienceLevel] = useState("Fresher")
 
   const [started, setStarted] = useState(false)
-
   const [currentQuestion, setCurrentQuestion] = useState("")
-
   const [answer, setAnswer] = useState("")
-
   const [feedback, setFeedback] = useState(null)
-
   const [loading, setLoading] = useState(false)
-
 
   // ---------------------------------
   // Start Interview
   // ---------------------------------
 
   const startInterview = () => {
-
     if (!jobRole.trim()) {
-
       alert("Please enter the job role.")
-
       return
     }
 
-
     setStarted(true)
-
 
     setCurrentQuestion(
       `Tell me about yourself and why you are interested in the ${jobRole} role.`
     )
 
-
     setAnswer("")
-
     setFeedback(null)
   }
-
 
   // ---------------------------------
   // Submit Answer
   // ---------------------------------
 
   const submitAnswer = async () => {
-
     if (!answer.trim()) {
-
       alert("Please enter your answer.")
-
       return
     }
 
-
     const formData = new FormData()
-
 
     formData.append(
       "job_role",
       jobRole
     )
 
-
     formData.append(
       "experience_level",
       experienceLevel
     )
-
 
     formData.append(
       "question",
       currentQuestion
     )
 
-
     formData.append(
       "answer",
       answer
     )
 
-
     setLoading(true)
-
     setFeedback(null)
 
-
     try {
+      const token = localStorage.getItem("token")
 
-     const token = localStorage.getItem("token")
-
-const response = await fetch(
-  "http://127.0.0.1:8000/evaluate-interview-answer",
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  }
-)
-
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/evaluate-interview-answer`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      )
 
       const data = await response.json()
 
-
       if (!response.ok) {
-
         throw new Error(
           "Interview evaluation failed"
         )
       }
 
-
       setFeedback(data)
 
-
     } catch (error) {
-
       console.error(error)
-
 
       alert(
         "Something went wrong while evaluating your answer."
       )
 
-
     } finally {
-
       setLoading(false)
-
     }
   }
-
 
   // ---------------------------------
   // End Interview
   // ---------------------------------
 
   const endInterview = () => {
-
     setStarted(false)
-
     setCurrentQuestion("")
-
     setAnswer("")
-
     setFeedback(null)
   }
 
-
   return (
-
     <div className="mock-page">
-
 
       {/* Header */}
 
@@ -171,8 +128,6 @@ const response = await fetch(
         </p>
 
       </div>
-
-
 
       {/* Setup Section */}
 
@@ -191,7 +146,6 @@ const response = await fetch(
               experience level to begin.
             </p>
 
-
             {/* Job Role */}
 
             <label>
@@ -207,7 +161,6 @@ const response = await fetch(
               }
             />
 
-
             {/* Experience Level */}
 
             <label>
@@ -220,7 +173,6 @@ const response = await fetch(
                 setExperienceLevel(e.target.value)
               }
             >
-
               <option value="Fresher">
                 Fresher
               </option>
@@ -240,9 +192,7 @@ const response = await fetch(
               <option value="5+ Years">
                 5+ Years
               </option>
-
             </select>
-
 
             <button
               className="start-interview-btn"
@@ -257,43 +207,31 @@ const response = await fetch(
 
       )}
 
-
-
       {/* Interview Section */}
 
       {started && (
 
         <div className="mock-interview-section">
 
-
           {/* Interview Information */}
 
           <div className="interview-info">
 
             <div>
-
               <strong>
                 Job Role:
               </strong>{" "}
-
               {jobRole}
-
             </div>
 
-
             <div>
-
               <strong>
                 Level:
               </strong>{" "}
-
               {experienceLevel}
-
             </div>
 
           </div>
-
-
 
           {/* Question */}
 
@@ -308,8 +246,6 @@ const response = await fetch(
             </h2>
 
           </div>
-
-
 
           {/* Answer */}
 
@@ -327,22 +263,17 @@ const response = await fetch(
               }
             />
 
-
             <button
               className="submit-answer-btn"
               onClick={submitAnswer}
               disabled={loading}
             >
-
               {loading
                 ? "🤖 AI Evaluating..."
                 : "Submit Answer"}
-
             </button>
 
           </div>
-
-
 
           {/* AI Feedback */}
 
@@ -353,7 +284,6 @@ const response = await fetch(
               <h2>
                 🤖 AI Feedback
               </h2>
-
 
               {/* Score */}
 
@@ -366,7 +296,6 @@ const response = await fetch(
                 </span>
 
               </div>
-
 
               {/* Overall Feedback */}
 
@@ -381,7 +310,6 @@ const response = await fetch(
                 </p>
 
               </div>
-
 
               {/* Strengths */}
 
@@ -417,7 +345,6 @@ const response = await fetch(
                 )}
 
               </div>
-
 
               {/* Improvements */}
 
@@ -458,8 +385,6 @@ const response = await fetch(
 
           )}
 
-
-
           {/* End Interview */}
 
           <div className="end-interview-container">
@@ -478,8 +403,8 @@ const response = await fetch(
       )}
 
     </div>
-
   )
 }
 
 export default MockInterview
+

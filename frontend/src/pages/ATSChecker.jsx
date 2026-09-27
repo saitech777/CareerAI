@@ -29,16 +29,16 @@ function ATSChecker() {
     try {
       const token = localStorage.getItem("token")
 
-const response = await fetch(
-  "http://127.0.0.1:8000/ats-check",
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  }
-)
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/ats-check`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      )
 
       const data = await response.json()
 
@@ -49,7 +49,6 @@ const response = await fetch(
       setResult(data)
 
     } catch (error) {
-
       console.error(error)
 
       alert(
@@ -57,9 +56,7 @@ const response = await fetch(
       )
 
     } finally {
-
       setLoading(false)
-
     }
   }
 
@@ -77,7 +74,6 @@ const response = await fetch(
         </p>
 
       </div>
-
 
       {/* Input Section */}
       <div className="ats-input-section">
@@ -102,19 +98,14 @@ const response = await fetch(
 
           {resumeFile && (
             <p className="selected-file">
-
-              Selected:
-              {" "}
-
+              Selected:{" "}
               <strong>
                 {resumeFile.name}
               </strong>
-
             </p>
           )}
 
         </div>
-
 
         {/* Job Description */}
         <div className="ats-card">
@@ -138,7 +129,6 @@ const response = await fetch(
 
       </div>
 
-
       {/* Check Button */}
       <div className="ats-button-container">
 
@@ -147,21 +137,16 @@ const response = await fetch(
           onClick={checkATS}
           disabled={loading}
         >
-
           {loading
-            ? "Analyzing with AI..."
+            ? "Analyzing..."
             : "Check ATS Compatibility"}
-
         </button>
 
       </div>
 
-
       {/* Results */}
       {result && (
-
         <div className="ats-results">
-
 
           {/* ATS Score */}
           <div className="ats-score-card">
@@ -178,38 +163,28 @@ const response = await fetch(
 
           </div>
 
-
           {/* Matched Keywords */}
           <div className="ats-result-card">
 
             <h2>✅ Matched Keywords</h2>
 
             {result.matchedKeywords.length > 0 ? (
-
               <ul>
-
                 {result.matchedKeywords.map(
                   (keyword, index) => (
-
                     <li key={index}>
                       {keyword}
                     </li>
-
                   )
                 )}
-
               </ul>
-
             ) : (
-
               <p>
                 No important matched keywords found.
               </p>
-
             )}
 
           </div>
-
 
           {/* Missing Keywords */}
           <div className="ats-result-card">
@@ -217,65 +192,47 @@ const response = await fetch(
             <h2>⚠️ Missing Keywords</h2>
 
             {result.missingKeywords.length > 0 ? (
-
               <ul>
-
                 {result.missingKeywords.map(
                   (keyword, index) => (
-
                     <li key={index}>
                       {keyword}
                     </li>
-
                   )
                 )}
-
               </ul>
-
             ) : (
-
               <p>
                 No major missing keywords detected.
               </p>
-
             )}
 
           </div>
 
-
           {/* Suggestions */}
           <div className="ats-result-card ats-suggestions">
 
-            <h2>💡 AI Suggestions</h2>
+            <h2>💡 Suggestions</h2>
 
             {result.suggestions.length > 0 ? (
-
               <ul>
-
                 {result.suggestions.map(
                   (suggestion, index) => (
-
                     <li key={index}>
                       {suggestion}
                     </li>
-
                   )
                 )}
-
               </ul>
-
             ) : (
-
               <p>
                 No additional suggestions.
               </p>
-
             )}
 
           </div>
 
         </div>
-
       )}
 
     </div>
@@ -283,3 +240,4 @@ const response = await fetch(
 }
 
 export default ATSChecker
+

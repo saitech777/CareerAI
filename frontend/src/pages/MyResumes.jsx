@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import "./MyResumes.css"
 
-const API_URL = "http://127.0.0.1:8000"
+const API_URL = import.meta.env.VITE_API_URL
 
 function MyResumes() {
   const [resumes, setResumes] = useState([])
@@ -256,7 +256,6 @@ function MyResumes() {
         </p>
       </div>
 
-
       {/* EDIT RESUME */}
 
       {editingResume && (
@@ -321,7 +320,6 @@ function MyResumes() {
         </div>
       )}
 
-
       {/* LOADING */}
 
       {loading && (
@@ -337,7 +335,6 @@ function MyResumes() {
 
         </div>
       )}
-
 
       {/* EMPTY */}
 
@@ -359,7 +356,6 @@ function MyResumes() {
 
           </div>
         )}
-
 
       {/* RESUME LIST */}
 
@@ -413,7 +409,6 @@ function MyResumes() {
 
                 </div>
 
-
                 {/* ACTION BUTTONS */}
 
                 <div className="resume-actions">
@@ -459,3 +454,4 @@ function MyResumes() {
 }
 
 export default MyResumes
+

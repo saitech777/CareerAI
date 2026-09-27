@@ -31,16 +31,16 @@ function InterviewQuestions() {
     try {
       const token = localStorage.getItem("token")
 
-const response = await fetch(
-  "http://127.0.0.1:8000/generate-interview-questions",
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  }
-)
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/generate-interview-questions`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      )
 
       const data = await response.json()
 
@@ -49,12 +49,14 @@ const response = await fetch(
       }
 
       setQuestions(data.questions || [])
+
     } catch (error) {
       console.error(error)
 
       alert(
         "Something went wrong while generating interview questions."
       )
+
     } finally {
       setLoading(false)
     }
@@ -72,7 +74,6 @@ const response = await fetch(
           your job role and job description.
         </p>
       </div>
-
 
       {/* Input Section */}
       <div className="interview-input-section">
@@ -98,7 +99,6 @@ const response = await fetch(
 
         </div>
 
-
         {/* Experience Level */}
         <div className="interview-card">
 
@@ -115,7 +115,6 @@ const response = await fetch(
               setQuestions([])
             }}
           >
-
             <option value="Fresher">
               Fresher
             </option>
@@ -135,11 +134,9 @@ const response = await fetch(
             <option value="5+ Years">
               5+ Years
             </option>
-
           </select>
 
         </div>
-
 
         {/* Job Description */}
         <div className="interview-card job-description-card">
@@ -163,7 +160,6 @@ const response = await fetch(
 
       </div>
 
-
       {/* Generate Button */}
       <div className="generate-button-container">
 
@@ -172,15 +168,12 @@ const response = await fetch(
           onClick={generateQuestions}
           disabled={loading}
         >
-
           {loading
             ? "Generating Questions..."
             : "🤖 Generate Interview Questions"}
-
         </button>
 
       </div>
-
 
       {/* Questions */}
       {questions.length > 0 && (
@@ -192,7 +185,6 @@ const response = await fetch(
           <p className="questions-subtitle">
             Practice answering these questions before your interview.
           </p>
-
 
           <div className="questions-list">
 
@@ -226,3 +218,4 @@ const response = await fetch(
 }
 
 export default InterviewQuestions
+

@@ -20,16 +20,16 @@ function ResumeAnalyzer() {
     try {
       const token = localStorage.getItem("token")
 
-const response = await fetch(
-  "http://127.0.0.1:8000/upload-resume",
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  }
-)
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/upload-resume`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      )
 
       const data = await response.json()
 
@@ -57,7 +57,6 @@ const response = await fetch(
           Upload your resume and discover how you can improve it.
         </p>
       </div>
-
 
       {/* Upload Section */}
       <div className="upload-card">
@@ -92,7 +91,6 @@ const response = await fetch(
 
       </div>
 
-
       {/* Results Section */}
       <div className="results-section">
 
@@ -112,7 +110,6 @@ const response = await fetch(
           </p>
 
         </div>
-
 
         {/* Strengths */}
         <div className="result-card">
@@ -134,7 +131,6 @@ const response = await fetch(
           )}
 
         </div>
-
 
         {/* Areas to Improve */}
         <div className="result-card">
@@ -163,7 +159,6 @@ const response = await fetch(
 
         </div>
 
-
         {/* AI Feedback */}
         {result && result.ai_feedback && (
           <div className="result-card ai-feedback-card">
@@ -176,7 +171,6 @@ const response = await fetch(
 
           </div>
         )}
-
 
         {/* Extracted Resume Text */}
         {result && (
@@ -198,3 +192,4 @@ const response = await fetch(
 }
 
 export default ResumeAnalyzer
+
