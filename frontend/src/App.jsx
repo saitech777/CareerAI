@@ -9,6 +9,32 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import "./App.css"
 
+// Small Back Button
+function BackButton({ onBack }) {
+  return (
+    <button
+      onClick={onBack}
+      style={{
+        position: "fixed",
+        top: "20px",
+        left: "20px",
+        zIndex: 1000,
+        border: "none",
+        background: "transparent",
+        fontSize: "28px",
+        cursor: "pointer",
+        color: "#4f46e5",
+        fontWeight: "bold",
+        padding: "0",
+        lineHeight: "1"
+      }}
+      title="Back to Dashboard"
+    >
+      ←
+    </button>
+  )
+}
+
 function App() {
   // Check whether the user is already logged in
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -58,32 +84,62 @@ function App() {
 
   // Resume Builder
   if (page === "resume-builder") {
-    return <ResumeBuilder />
+    return (
+      <>
+        <BackButton onBack={() => setPage("dashboard")} />
+        <ResumeBuilder />
+      </>
+    )
   }
 
   // Resume Analyzer
   if (page === "resume-analyzer") {
-    return <ResumeAnalyzer />
+    return (
+      <>
+        <BackButton onBack={() => setPage("dashboard")} />
+        <ResumeAnalyzer />
+      </>
+    )
   }
 
   // ATS Checker
   if (page === "ats-checker") {
-    return <ATSChecker />
+    return (
+      <>
+        <BackButton onBack={() => setPage("dashboard")} />
+        <ATSChecker />
+      </>
+    )
   }
 
   // Interview Questions
   if (page === "interview-questions") {
-    return <InterviewQuestions />
+    return (
+      <>
+        <BackButton onBack={() => setPage("dashboard")} />
+        <InterviewQuestions />
+      </>
+    )
   }
 
   // Mock Interview
   if (page === "mock-interview") {
-    return <MockInterview />
+    return (
+      <>
+        <BackButton onBack={() => setPage("dashboard")} />
+        <MockInterview />
+      </>
+    )
   }
 
   // My Resumes
   if (page === "my-resumes") {
-    return <MyResumes />
+    return (
+      <>
+        <BackButton onBack={() => setPage("dashboard")} />
+        <MyResumes />
+      </>
+    )
   }
 
   // Dashboard
