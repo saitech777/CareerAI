@@ -1,18 +1,48 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi import Header, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+
 from pypdf import PdfReader
 from docx import Document
-from openai import OpenAI
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 
 import io
 import os
-import json
 import re
 import bcrypt
+
 from jose import jwt
+
+
+# ============================================================
+# ENVIRONMENT CONFIGURATION
+# ============================================================
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is not set.")
+
+
+# Render PostgreSQL normally provides:
+# postgresql://...
+#
+# SQLAlchemy 2.x may otherwise select psycopg3.
+# We explicitly use psycopg2 because psycopg2-binary
+# is already included in requirements.txt.
+
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgresql://",
+        "postgresql+psycopg2://",
+        1
+    )
+
+engine = create_engine(DATABASE_URL)
+
 
 # ============================================================
 # JWT CONFIGURATION
@@ -24,14 +54,49 @@ JWT_SECRET = os.getenv(
 )
 
 JWT_ALGORITHM = "HS256"
-from fastapi import Header, HTTPException
+
+
+# ============================================================
+# FASTAPI APPLICATION
+# ============================================================
+
+app = FastAPI(
+    title="CareerAI API",
+    description="CareerAI Resume and Interview Assistant",
+    version="1.0.0"
+)
+
+
+# ============================================================
+# CORS CONFIGURATION
+# ============================================================
+
+frontend_url = os.getenv("FRONTEND_URL")
+
+allowed_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+]
+
+if frontend_url:
+    allowed_origins.append(frontend_url)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # ============================================================
 # JWT TOKEN VERIFICATION
 # ============================================================
 
-def get_current_user(authorization: str = Header(None)):
+def get_current_user(
+    authorization: str = Header(None)
+):
     """
     Verify the JWT token sent by the frontend
     and return the logged-in user's ID.
@@ -49,9 +114,14 @@ def get_current_user(authorization: str = Header(None)):
             detail="Invalid authorization format."
         )
 
-    token = authorization.replace("Bearer ", "", 1)
+    token = authorization.replace(
+        "Bearer ",
+        "",
+        1
+    )
 
     try:
+
         payload = jwt.decode(
             token,
             JWT_SECRET,
@@ -68,52 +138,14 @@ def get_current_user(authorization: str = Header(None)):
 
         return user_id
 
+    except HTTPException:
+        raise
+
     except Exception:
         raise HTTPException(
             status_code=401,
             detail="Invalid or expired token."
         )
-
-
-
-# ============================================================
-# ENVIRONMENT CONFIGURATION
-# ============================================================
-
-load_dotenv()
-
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-engine = create_engine(DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1))
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
-)
-
-
-# ============================================================
-# FASTAPI APPLICATION
-# ============================================================
-
-app = FastAPI(
-    title="CareerAI API",
-    description="AI-powered Resume and Interview Assistant",
-    version="1.0.0"
-)
-
-
-# ============================================================
-# CORS CONFIGURATION
-# ============================================================
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173"
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 # ============================================================
@@ -186,9 +218,11 @@ def create_test_user(
             "message": "Failed to save user.",
             "error": str(error)
         }
-# =========================
-# User Registration
-# =========================
+
+
+# ============================================================
+# USER REGISTRATION
+# ============================================================
 
 @app.post("/register")
 def register_user(
@@ -197,12 +231,10 @@ def register_user(
     password: str = Form(...)
 ):
 
-    # Remove unnecessary spaces
     name = name.strip()
     email = email.strip().lower()
     password = password.strip()
 
-    # Validate input
     if not name:
         return {
             "success": False,
@@ -231,7 +263,6 @@ def register_user(
 
         with engine.connect() as connection:
 
-            # Check whether email already exists
             existing_user = connection.execute(
                 text("""
                     SELECT id
@@ -250,13 +281,11 @@ def register_user(
                     "message": "Email is already registered."
                 }
 
-            # Hash password
             hashed_password = bcrypt.hashpw(
                 password.encode("utf-8"),
                 bcrypt.gensalt()
             ).decode("utf-8")
 
-            # Insert new user
             result = connection.execute(
                 text("""
                     INSERT INTO users
@@ -286,7 +315,10 @@ def register_user(
 
     except Exception as error:
 
-        print("Registration error:", error)
+        print(
+            "Registration error:",
+            error
+        )
 
         return {
             "success": False,
@@ -309,24 +341,42 @@ def login_user(
     password = password.strip()
 
     if not email:
-        return {"success": False, "message": "Email is required."}
+        return {
+            "success": False,
+            "message": "Email is required."
+        }
 
     if not password:
-        return {"success": False, "message": "Password is required."}
+        return {
+            "success": False,
+            "message": "Password is required."
+        }
 
     try:
+
         with engine.connect() as connection:
+
             user = connection.execute(
                 text("""
-                    SELECT id, name, email, password
+                    SELECT
+                        id,
+                        name,
+                        email,
+                        password
                     FROM users
                     WHERE email = :email
                 """),
-                {"email": email}
+                {
+                    "email": email
+                }
             ).fetchone()
 
         if not user:
-            return {"success": False, "message": "Invalid email or password."}
+
+            return {
+                "success": False,
+                "message": "Invalid email or password."
+            }
 
         user_id = user[0]
         user_name = user[1]
@@ -339,10 +389,17 @@ def login_user(
         )
 
         if not password_correct:
-            return {"success": False, "message": "Invalid email or password."}
+
+            return {
+                "success": False,
+                "message": "Invalid email or password."
+            }
 
         token = jwt.encode(
-            {"user_id": user_id, "email": user_email},
+            {
+                "user_id": user_id,
+                "email": user_email
+            },
             JWT_SECRET,
             algorithm=JWT_ALGORITHM
         )
@@ -359,12 +416,18 @@ def login_user(
         }
 
     except Exception as error:
-        print("Login error:", error)
+
+        print(
+            "Login error:",
+            error
+        )
+
         return {
             "success": False,
             "message": "Login failed.",
             "error": str(error)
         }
+
 
 # ============================================================
 # SAVE RESUME
@@ -377,15 +440,18 @@ def create_test_resume(
     content: str = Form(...),
     current_user_id: int = Depends(get_current_user)
 ):
-    # Make sure the resume is saved only for the logged-in user
+
     if user_id != current_user_id:
+
         raise HTTPException(
             status_code=403,
             detail="You are not allowed to save a resume for another user."
         )
 
     try:
+
         with engine.connect() as connection:
+
             connection.execute(
                 text("""
                     INSERT INTO resumes
@@ -409,6 +475,7 @@ def create_test_resume(
                     "content": content
                 }
             )
+
             connection.commit()
 
         return {
@@ -418,12 +485,16 @@ def create_test_resume(
         }
 
     except Exception as error:
+
+        print(
+            "Save resume error:",
+            error
+        )
+
         return {
             "message": "Failed to save resume.",
             "error": str(error)
         }
-
-
 
 
 # ============================================================
@@ -435,11 +506,14 @@ def get_resumes(
     user_id: int,
     current_user_id: int = Depends(get_current_user)
 ):
+
     if user_id != current_user_id:
+
         raise HTTPException(
             status_code=403,
             detail="You are not allowed to access these resumes."
         )
+
     try:
 
         with engine.connect() as connection:
@@ -486,6 +560,11 @@ def get_resumes(
 
     except Exception as error:
 
+        print(
+            "Get resumes error:",
+            error
+        )
+
         return {
             "message": "Failed to retrieve resumes.",
             "resumes": [],
@@ -502,8 +581,11 @@ def get_single_resume(
     resume_id: int,
     current_user_id: int = Depends(get_current_user)
 ):
+
     try:
+
         with engine.connect() as connection:
+
             result = connection.execute(
                 text("""
                     SELECT
@@ -515,14 +597,22 @@ def get_single_resume(
                     FROM resumes
                     WHERE id = :resume_id
                 """),
-                {"resume_id": resume_id}
+                {
+                    "resume_id": resume_id
+                }
             )
+
             row = result.fetchone()
 
         if row is None:
-            return {"message": "Resume not found.", "resume": None}
+
+            return {
+                "message": "Resume not found.",
+                "resume": None
+            }
 
         if row.user_id != current_user_id:
+
             raise HTTPException(
                 status_code=403,
                 detail="You are not allowed to access this resume."
@@ -533,7 +623,11 @@ def get_single_resume(
             "user_id": row.user_id,
             "title": row.title,
             "content": row.content,
-            "created_at": row.created_at.isoformat() if row.created_at else None
+            "created_at": (
+                row.created_at.isoformat()
+                if row.created_at
+                else None
+            )
         }
 
         return {
@@ -543,14 +637,19 @@ def get_single_resume(
 
     except HTTPException:
         raise
+
     except Exception as error:
+
+        print(
+            "Get resume error:",
+            error
+        )
+
         return {
             "message": "Failed to retrieve resume.",
             "resume": None,
             "error": str(error)
         }
-
-
 
 
 # ============================================================
@@ -564,21 +663,31 @@ def update_resume(
     content: str = Form(...),
     current_user_id: int = Depends(get_current_user)
 ):
+
     try:
+
         with engine.connect() as connection:
+
             owner = connection.execute(
                 text("""
                     SELECT user_id
                     FROM resumes
                     WHERE id = :resume_id
                 """),
-                {"resume_id": resume_id}
+                {
+                    "resume_id": resume_id
+                }
             ).fetchone()
 
             if owner is None:
-                return {"message": "Resume not found.", "resume_id": resume_id}
+
+                return {
+                    "message": "Resume not found.",
+                    "resume_id": resume_id
+                }
 
             if owner.user_id != current_user_id:
+
                 raise HTTPException(
                     status_code=403,
                     detail="You are not allowed to update this resume."
@@ -587,7 +696,8 @@ def update_resume(
             connection.execute(
                 text("""
                     UPDATE resumes
-                    SET title = :title,
+                    SET
+                        title = :title,
                         content = :content
                     WHERE id = :resume_id
                       AND user_id = :user_id
@@ -599,6 +709,7 @@ def update_resume(
                     "content": content
                 }
             )
+
             connection.commit()
 
         return {
@@ -609,14 +720,19 @@ def update_resume(
 
     except HTTPException:
         raise
+
     except Exception as error:
+
+        print(
+            "Update resume error:",
+            error
+        )
+
         return {
             "message": "Failed to update resume.",
             "resume_id": resume_id,
             "error": str(error)
         }
-
-
 
 
 # ============================================================
@@ -668,7 +784,7 @@ def extract_resume_text(
         return text_content
 
     # --------------------------------------------------------
-    # Unsupported File
+    # UNSUPPORTED FILE
     # --------------------------------------------------------
 
     else:
@@ -681,8 +797,6 @@ def extract_resume_text(
 # ============================================================
 # RESUME ANALYZER
 # ============================================================
-
-
 
 @app.post("/upload-resume")
 async def upload_resume(
@@ -702,13 +816,30 @@ async def upload_resume(
     except ValueError as error:
 
         return {
-            "message": str(error)
+            "message": str(error),
+            "score": 0,
+            "strengths": [],
+            "improvements": [],
+            "text": "",
+            "ai_feedback": ""
+        }
+
+    if not resume_text.strip():
+
+        return {
+            "message": "Could not extract text from the resume.",
+            "score": 0,
+            "strengths": [],
+            "improvements": [],
+            "text": "",
+            "ai_feedback": ""
         }
 
     text_lower = resume_text.lower()
 
     strengths = []
     improvements = []
+
     score = 0
 
     # --------------------------------------------------------
@@ -878,341 +1009,93 @@ async def upload_resume(
             "Add a professional summary or career objective."
         )
 
-    # ========================================================
-    # AI RESUME FEEDBACK
-    # ========================================================
-
-    ai_feedback = ""
-
-    try:
-
-        prompt = f"""
-You are an expert professional resume reviewer.
-
-Analyze the following resume:
-
-{resume_text}
-
-Provide practical feedback for a student or job seeker.
-
-Use this format:
-
-Overall Feedback:
-...
-
-Strengths:
-- ...
-- ...
-- ...
-
-Areas to Improve:
-- ...
-- ...
-- ...
-
-ATS Suggestions:
-- ...
-- ...
-- ...
-"""
-
-        response = client.responses.create(
-            model="gpt-5.6-luna",
-            input=prompt
-        )
-
-        ai_feedback = response.output_text
-
-    except Exception as error:
-
-        print(
-            "AI analysis error:",
-            error
-        )
-
-        ai_feedback = (
-            "AI analysis could not be completed. "
-            "Please check your API configuration."
-        )
-
-    return {
-        "message":
-            "Resume analyzed successfully!",
-
-        "filename":
-            file.filename,
-
-        "score":
-            score,
-
-        "strengths":
-            strengths,
-
-        "improvements":
-            improvements,
-
-        "text":
-            resume_text,
-
-        "ai_feedback":
-            ai_feedback
-    }
-
-
     # --------------------------------------------------------
-    # WORD COUNT
+    # LIMIT SCORE
     # --------------------------------------------------------
 
-    word_count = len(
-        resume_text.split()
+    score = min(
+        100,
+        score
     )
 
-    if word_count >= 100:
+    # --------------------------------------------------------
+    # LOCAL AI FEEDBACK
+    #
+    # This does NOT use OpenAI.
+    # --------------------------------------------------------
 
-        strengths.append(
-            "Resume contains sufficient content."
+    feedback_points = []
+
+    if score >= 80:
+
+        feedback_points.append(
+            "Your resume contains most of the important sections."
         )
 
-        score += 15
+    elif score >= 60:
+
+        feedback_points.append(
+            "Your resume has a good foundation but can be improved."
+        )
 
     else:
 
-        improvements.append(
-            "Add more relevant details to your resume."
+        feedback_points.append(
+            "Your resume needs additional relevant sections and details."
         )
 
+    if word_count < 100:
 
-    # --------------------------------------------------------
-    # EMAIL
-    # --------------------------------------------------------
+        feedback_points.append(
+            "Add more specific information about your education, "
+            "projects, skills, and experience."
+        )
 
-    if (
-        "mail" in text_lower
-        or "@" in text_lower
+    if not any(
+        word in text_lower
+        for word in ["summary", "objective", "profile"]
     ):
 
-        strengths.append(
-            "Email contact information found."
+        feedback_points.append(
+            "Consider adding a professional summary or career objective."
         )
 
-        score += 10
+    if "projects" not in text_lower:
 
-    else:
-
-        improvements.append(
-            "Add a professional email address."
+        feedback_points.append(
+            "Include relevant academic or personal projects."
         )
-
-
-    # --------------------------------------------------------
-    # EDUCATION
-    # --------------------------------------------------------
-
-    if "education" in text_lower:
-
-        strengths.append(
-            "Education section found."
-        )
-
-        score += 15
-
-    else:
-
-        improvements.append(
-            "Add an Education section."
-        )
-
-
-    # --------------------------------------------------------
-    # SKILLS
-    # --------------------------------------------------------
 
     if (
-        "skills" in text_lower
-        or "technical skills" in text_lower
+        "experience" not in text_lower
+        and "internship" not in text_lower
     ):
 
-        strengths.append(
-            "Skills section found."
+        feedback_points.append(
+            "Include internship, training, or work experience where applicable."
         )
 
-        score += 15
-
-    else:
-
-        improvements.append(
-            "Add a Skills section."
+    ai_feedback = (
+        "CareerAI Local Resume Feedback:\n\n"
+        + "\n".join(
+            f"- {point}"
+            for point in feedback_points
         )
-
-
-    # --------------------------------------------------------
-    # EXPERIENCE
-    # --------------------------------------------------------
-
-    if (
-        "experience" in text_lower
-        or "internship" in text_lower
-    ):
-
-        strengths.append(
-            "Experience information found."
+        + "\n\n"
+        + (
+            "This analysis uses CareerAI's local resume evaluation "
+            "system and does not require an external AI API."
         )
-
-        score += 15
-
-    else:
-
-        improvements.append(
-            "Add internship or work experience."
-        )
-
-
-    # --------------------------------------------------------
-    # PROJECTS
-    # --------------------------------------------------------
-
-    if (
-        "projects" in text_lower
-        or "project" in text_lower
-    ):
-
-        strengths.append(
-            "Projects section found."
-        )
-
-        score += 10
-
-    else:
-
-        improvements.append(
-            "Add relevant projects."
-        )
-
-
-    # --------------------------------------------------------
-    # CERTIFICATIONS
-    # --------------------------------------------------------
-
-    if (
-        "certification" in text_lower
-        or "certifications" in text_lower
-    ):
-
-        strengths.append(
-            "Certifications section found."
-        )
-
-        score += 10
-
-    else:
-
-        improvements.append(
-            "Add relevant certifications if available."
-        )
-
-
-    # --------------------------------------------------------
-    # SUMMARY / OBJECTIVE
-    # --------------------------------------------------------
-
-    if (
-        "objective" in text_lower
-        or "summary" in text_lower
-        or "profile" in text_lower
-    ):
-
-        strengths.append(
-            "Professional summary or objective found."
-        )
-
-        score += 10
-
-    else:
-
-        improvements.append(
-            "Add a professional summary or career objective."
-        )
-
-
-    # ========================================================
-    # AI RESUME FEEDBACK
-    # ========================================================
-
-    ai_feedback = ""
-
-    try:
-
-        prompt = f"""
-You are an expert professional resume reviewer.
-
-Analyze the following resume:
-
-{resume_text}
-
-Provide practical feedback for a student or job seeker.
-
-Use this format:
-
-Overall Feedback:
-...
-
-Strengths:
-- ...
-- ...
-- ...
-
-Areas to Improve:
-- ...
-- ...
-- ...
-
-ATS Suggestions:
-- ...
-- ...
-- ...
-"""
-
-        response = client.responses.create(
-            model="gpt-5.6-luna",
-            input=prompt
-        )
-
-        ai_feedback = response.output_text
-
-    except Exception as error:
-
-        print(
-            "AI analysis error:",
-            error
-        )
-
-        ai_feedback = (
-            "AI analysis could not be completed. "
-            "Please check your API configuration."
-        )
-
+    )
 
     return {
-        "message":
-            "Resume analyzed successfully!",
-
-        "filename":
-            file.filename,
-
-        "score":
-            score,
-
-        "strengths":
-            strengths,
-
-        "improvements":
-            improvements,
-
-        "text":
-            resume_text,
-
-        "ai_feedback":
-            ai_feedback
+        "message": "Resume analyzed successfully!",
+        "filename": file.filename,
+        "score": score,
+        "strengths": strengths,
+        "improvements": improvements,
+        "text": resume_text,
+        "ai_feedback": ai_feedback
     }
 
 
@@ -1234,11 +1117,14 @@ async def ats_check(
     file_content = await file.read()
 
     try:
+
         resume_text = extract_resume_text(
             file_content,
             file.filename
         )
+
     except ValueError as error:
+
         return {
             "message": str(error),
             "score": 0,
@@ -1248,6 +1134,7 @@ async def ats_check(
         }
 
     if not resume_text.strip():
+
         return {
             "message": "Could not extract text from the resume.",
             "score": 0,
@@ -1257,6 +1144,7 @@ async def ats_check(
         }
 
     if not job_description.strip():
+
         return {
             "message": "Job description cannot be empty.",
             "score": 0,
@@ -1266,77 +1154,168 @@ async def ats_check(
         }
 
     known_keywords = [
-        "python", "java", "javascript", "typescript", "react",
-        "react.js", "node.js", "html", "css", "sql", "mysql",
-        "postgresql", "mongodb", "fastapi", "django", "flask",
-        "rest api", "rest apis", "api", "git", "github", "docker",
-        "aws", "azure", "machine learning", "deep learning",
-        "artificial intelligence", "ai", "data analysis",
-        "data science", "pandas", "numpy", "scikit-learn",
-        "tensorflow", "pytorch", "power bi", "excel",
-        "communication", "problem-solving", "problem solving",
-        "leadership", "teamwork", "time management",
-        "project management", "c", "c++", "kotlin", "android",
-        "flutter", "figma", "bootstrap", "tailwind", "spring boot",
-        ".net", "linux", "agile", "scrum"
+        "python",
+        "java",
+        "javascript",
+        "typescript",
+        "react",
+        "react.js",
+        "node.js",
+        "html",
+        "css",
+        "sql",
+        "mysql",
+        "postgresql",
+        "mongodb",
+        "fastapi",
+        "django",
+        "flask",
+        "rest api",
+        "rest apis",
+        "api",
+        "git",
+        "github",
+        "docker",
+        "aws",
+        "azure",
+        "machine learning",
+        "deep learning",
+        "artificial intelligence",
+        "ai",
+        "data analysis",
+        "data science",
+        "pandas",
+        "numpy",
+        "scikit-learn",
+        "tensorflow",
+        "pytorch",
+        "power bi",
+        "excel",
+        "communication",
+        "problem-solving",
+        "problem solving",
+        "leadership",
+        "teamwork",
+        "time management",
+        "project management",
+        "c",
+        "c++",
+        "kotlin",
+        "android",
+        "flutter",
+        "figma",
+        "bootstrap",
+        "tailwind",
+        "spring boot",
+        ".net",
+        "linux",
+        "agile",
+        "scrum"
     ]
 
     resume_lower = resume_text.lower()
     job_lower = job_description.lower()
 
-    def keyword_present(keyword, text):
+    def keyword_present(
+        keyword,
+        content
+    ):
+
         if keyword in ["c", "c++"]:
+
             return re.search(
-                r"(?<![a-z0-9])" + re.escape(keyword) + r"(?![a-z0-9])",
-                text
+                r"(?<![a-z0-9])"
+                + re.escape(keyword)
+                + r"(?![a-z0-9])",
+                content
             ) is not None
-        return keyword.lower() in text
+
+        return keyword.lower() in content
 
     job_keywords = []
 
     for keyword in known_keywords:
-        if keyword_present(keyword, job_lower):
+
+        if keyword_present(
+            keyword,
+            job_lower
+        ):
+
             if keyword not in job_keywords:
+
                 job_keywords.append(keyword)
 
     matched_keywords = []
     missing_keywords = []
 
     for keyword in job_keywords:
-        if keyword_present(keyword, resume_lower):
-            matched_keywords.append(keyword)
+
+        if keyword_present(
+            keyword,
+            resume_lower
+        ):
+
+            matched_keywords.append(
+                keyword
+            )
+
         else:
-            missing_keywords.append(keyword)
+
+            missing_keywords.append(
+                keyword
+            )
 
     if job_keywords:
+
         score = round(
-            (len(matched_keywords) / len(job_keywords)) * 100
+            (
+                len(matched_keywords)
+                / len(job_keywords)
+            ) * 100
         )
+
     else:
+
         score = 0
 
-    score = max(0, min(100, score))
+    score = max(
+        0,
+        min(
+            100,
+            score
+        )
+    )
 
     suggestions = []
 
     if missing_keywords:
+
         suggestions.append(
             "Consider adding relevant experience, projects, or skills "
-            "related to: " + ", ".join(missing_keywords[:8]) + "."
+            "related to: "
+            + ", ".join(
+                missing_keywords[:8]
+            )
+            + "."
         )
 
     if score < 50:
+
         suggestions.append(
             "Improve keyword alignment by naturally including important "
             "skills from the job description in relevant resume sections."
         )
+
     elif score < 80:
+
         suggestions.append(
             "Your resume has several matching keywords. Add missing "
             "job-related skills where they are genuinely supported by "
             "your experience."
         )
+
     else:
+
         suggestions.append(
             "Your resume contains strong keyword alignment with this "
             "job description. Keep the keywords relevant and supported "
@@ -1344,6 +1323,7 @@ async def ats_check(
         )
 
     if len(resume_text.split()) < 100:
+
         suggestions.append(
             "Add more specific details about your projects, experience, "
             "technical skills, and achievements."
@@ -1379,18 +1359,21 @@ async def generate_interview_questions(
     job_description = job_description.strip()
 
     if not job_role:
+
         return {
             "message": "Job role cannot be empty.",
             "questions": []
         }
 
     if not experience_level:
+
         return {
             "message": "Experience level cannot be empty.",
             "questions": []
         }
 
     if not job_description:
+
         return {
             "message": "Job description cannot be empty.",
             "questions": []
@@ -1400,60 +1383,123 @@ async def generate_interview_questions(
     role_lower = job_role.lower()
 
     known_skills = [
-        "python", "java", "javascript", "typescript", "react",
-        "sql", "postgresql", "mysql", "mongodb", "fastapi",
-        "django", "flask", "rest api", "rest apis", "git",
-        "github", "docker", "aws", "azure", "html", "css",
-        "pandas", "numpy", "machine learning", "deep learning",
-        "artificial intelligence", "data analysis", "kotlin",
-        "android", "flutter", "c++", "c", "spring boot",
-        "power bi", "excel"
+        "python",
+        "java",
+        "javascript",
+        "typescript",
+        "react",
+        "sql",
+        "postgresql",
+        "mysql",
+        "mongodb",
+        "fastapi",
+        "django",
+        "flask",
+        "rest api",
+        "rest apis",
+        "git",
+        "github",
+        "docker",
+        "aws",
+        "azure",
+        "html",
+        "css",
+        "pandas",
+        "numpy",
+        "machine learning",
+        "deep learning",
+        "artificial intelligence",
+        "data analysis",
+        "kotlin",
+        "android",
+        "flutter",
+        "c++",
+        "c",
+        "spring boot",
+        "power bi",
+        "excel"
     ]
 
     detected_skills = [
-        skill for skill in known_skills
-        if skill in description_lower or skill in role_lower
+        skill
+        for skill in known_skills
+        if (
+            skill in description_lower
+            or skill in role_lower
+        )
     ]
 
-    primary_skill = detected_skills[0] if detected_skills else job_role
+    primary_skill = (
+        detected_skills[0]
+        if detected_skills
+        else job_role
+    )
+
     secondary_skills = detected_skills[1:4]
 
     questions = [
-        f"For the {job_role} role, how would you explain your experience and interest in this position?",
-        f"What are the key concepts of {primary_skill} that a {experience_level.lower()} candidate should understand?",
-        f"Describe a project where you used {primary_skill}. What was your role and what did you achieve?",
-        f"How would you solve a technical problem related to {primary_skill} when your first approach does not work?",
-        f"What are some common mistakes developers make when working with {primary_skill}, and how can they be avoided?"
+
+        f"For the {job_role} role, how would you explain your "
+        f"experience and interest in this position?",
+
+        f"What are the key concepts of {primary_skill} that a "
+        f"{experience_level.lower()} candidate should understand?",
+
+        f"Describe a project where you used {primary_skill}. "
+        f"What was your role and what did you achieve?",
+
+        f"How would you solve a technical problem related to "
+        f"{primary_skill} when your first approach does not work?",
+
+        f"What are some common mistakes developers make when "
+        f"working with {primary_skill}, and how can they be avoided?"
     ]
 
     if secondary_skills:
+
         questions.append(
-            f"How would you use {secondary_skills[0]} together with {primary_skill} in a real-world project?"
+            f"How would you use {secondary_skills[0]} together "
+            f"with {primary_skill} in a real-world project?"
         )
+
     else:
+
         questions.append(
-            f"What tools or technologies would you normally use with {primary_skill} in a real-world project?"
+            f"What tools or technologies would you normally use "
+            f"with {primary_skill} in a real-world project?"
         )
 
     if len(secondary_skills) >= 2:
+
         questions.append(
-            f"Explain how {secondary_skills[1]} could be used in the kind of project described in the job requirements."
+            f"Explain how {secondary_skills[1]} could be used "
+            f"in the kind of project described in the job requirements."
         )
+
     else:
+
         questions.append(
-            "How do you test and debug your code before considering a feature complete?"
+            "How do you test and debug your code before considering "
+            "a feature complete?"
         )
 
     questions.extend([
-        "Tell me about a difficult problem you faced in a project and how you solved it.",
-        "How do you communicate technical problems or project updates to teammates?",
-        f"Why do you think your skills and experience are suitable for this {job_role} position?"
+
+        "Tell me about a difficult problem you faced in a project "
+        "and how you solved it.",
+
+        "How do you communicate technical problems or project "
+        "updates to teammates?",
+
+        f"Why do you think your skills and experience are suitable "
+        f"for this {job_role} position?"
     ])
 
     return {
         "message": "Interview questions generated successfully!",
         "questions": questions[:10]
     }
+
 
 # ============================================================
 # MOCK INTERVIEW ANSWER EVALUATION
@@ -1478,6 +1524,7 @@ async def evaluate_interview_answer(
     answer = answer.strip()
 
     if not job_role:
+
         return {
             "message": "Job role cannot be empty.",
             "score": 0,
@@ -1487,6 +1534,7 @@ async def evaluate_interview_answer(
         }
 
     if not experience_level:
+
         return {
             "message": "Experience level cannot be empty.",
             "score": 0,
@@ -1496,6 +1544,7 @@ async def evaluate_interview_answer(
         }
 
     if not question:
+
         return {
             "message": "Interview question cannot be empty.",
             "score": 0,
@@ -1505,6 +1554,7 @@ async def evaluate_interview_answer(
         }
 
     if not answer:
+
         return {
             "message": "Answer cannot be empty.",
             "score": 0,
@@ -1514,67 +1564,150 @@ async def evaluate_interview_answer(
         }
 
     answer_lower = answer.lower()
-    word_count = len(answer.split())
+
+    word_count = len(
+        answer.split()
+    )
 
     strengths = []
     improvements = []
 
+    # --------------------------------------------------------
+    # DETAIL
+    # --------------------------------------------------------
+
     if word_count >= 80:
-        strengths.append("The answer provides a good amount of detail.")
+
+        strengths.append(
+            "The answer provides a good amount of detail."
+        )
+
     elif word_count >= 40:
-        strengths.append("The answer provides a reasonable level of detail.")
+
+        strengths.append(
+            "The answer provides a reasonable level of detail."
+        )
+
     else:
+
         improvements.append(
             "Provide more detail and explain your reasoning clearly."
         )
 
-    if any(word in answer_lower for word in [
-        "project", "experience", "internship", "developed", "built"
-    ]):
+    # --------------------------------------------------------
+    # PRACTICAL EXPERIENCE
+    # --------------------------------------------------------
+
+    if any(
+        word in answer_lower
+        for word in [
+            "project",
+            "experience",
+            "internship",
+            "developed",
+            "built"
+        ]
+    ):
+
         strengths.append(
             "The answer includes practical experience or project context."
         )
+
     else:
+
         improvements.append(
-            "Include a relevant project, internship, or practical example "
-            "when possible."
+            "Include a relevant project, internship, or practical "
+            "example when possible."
         )
 
-    if any(word in answer_lower for word in [
-        "because", "therefore", "reason", "approach", "solution"
-    ]):
+    # --------------------------------------------------------
+    # REASONING
+    # --------------------------------------------------------
+
+    if any(
+        word in answer_lower
+        for word in [
+            "because",
+            "therefore",
+            "reason",
+            "approach",
+            "solution"
+        ]
+    ):
+
         strengths.append(
             "The answer explains reasoning or an approach."
         )
+
     else:
+
         improvements.append(
             "Explain why you chose your approach, not only what you did."
         )
 
-    if any(word in answer_lower for word in [
-        "python", "sql", "react", "fastapi", "postgresql", "java",
-        "javascript", "api", "git", "database", "testing", "debug"
-    ]):
+    # --------------------------------------------------------
+    # TECHNICAL TERMS
+    # --------------------------------------------------------
+
+    if any(
+        word in answer_lower
+        for word in [
+            "python",
+            "sql",
+            "react",
+            "fastapi",
+            "postgresql",
+            "java",
+            "javascript",
+            "api",
+            "git",
+            "database",
+            "testing",
+            "debug"
+        ]
+    ):
+
         strengths.append(
             "The answer includes relevant technical terminology."
         )
+
     else:
+
         improvements.append(
-            "Where appropriate, mention the specific technologies or "
-            "technical concepts involved."
+            "Where appropriate, mention the specific technologies "
+            "or technical concepts involved."
         )
 
-    if any(word in answer_lower for word in [
-        "result", "achieved", "improved", "completed", "increased",
-        "reduced", "success"
-    ]):
+    # --------------------------------------------------------
+    # RESULT / OUTCOME
+    # --------------------------------------------------------
+
+    if any(
+        word in answer_lower
+        for word in [
+            "result",
+            "achieved",
+            "improved",
+            "completed",
+            "increased",
+            "reduced",
+            "success"
+        ]
+    ):
+
         strengths.append(
             "The answer describes an outcome or result."
         )
+
     else:
+
         improvements.append(
             "End with the result, outcome, or what you learned."
         )
+
+    # --------------------------------------------------------
+    # SCORE
+    # --------------------------------------------------------
 
     score = 40
 
@@ -1584,45 +1717,96 @@ async def evaluate_interview_answer(
     if word_count >= 80:
         score += 10
 
-    if any(word in answer_lower for word in [
-        "project", "experience", "internship", "developed", "built"
-    ]):
+    if any(
+        word in answer_lower
+        for word in [
+            "project",
+            "experience",
+            "internship",
+            "developed",
+            "built"
+        ]
+    ):
         score += 10
 
-    if any(word in answer_lower for word in [
-        "because", "therefore", "reason", "approach", "solution"
-    ]):
+    if any(
+        word in answer_lower
+        for word in [
+            "because",
+            "therefore",
+            "reason",
+            "approach",
+            "solution"
+        ]
+    ):
         score += 10
 
-    if any(word in answer_lower for word in [
-        "python", "sql", "react", "fastapi", "postgresql", "java",
-        "javascript", "api", "git", "database", "testing", "debug"
-    ]):
+    if any(
+        word in answer_lower
+        for word in [
+            "python",
+            "sql",
+            "react",
+            "fastapi",
+            "postgresql",
+            "java",
+            "javascript",
+            "api",
+            "git",
+            "database",
+            "testing",
+            "debug"
+        ]
+    ):
         score += 5
 
-    if any(word in answer_lower for word in [
-        "result", "achieved", "improved", "completed", "increased",
-        "reduced", "success"
-    ]):
+    if any(
+        word in answer_lower
+        for word in [
+            "result",
+            "achieved",
+            "improved",
+            "completed",
+            "increased",
+            "reduced",
+            "success"
+        ]
+    ):
         score += 5
 
-    score = min(100, score)
+    score = min(
+        100,
+        score
+    )
+
+    # --------------------------------------------------------
+    # FEEDBACK
+    # --------------------------------------------------------
 
     if score >= 80:
+
         feedback = (
-            f"Your answer is strong for a {experience_level.lower()} "
-            f"{job_role} candidate. It is detailed and includes useful "
-            "supporting information."
+            f"Your answer is strong for a "
+            f"{experience_level.lower()} "
+            f"{job_role} candidate. "
+            "It is detailed and includes useful supporting information."
         )
+
     elif score >= 60:
+
         feedback = (
-            "Your answer has a good foundation. Make it stronger by "
-            "adding a specific example, technical details, and a clear result."
+            "Your answer has a good foundation. "
+            "Make it stronger by adding a specific example, "
+            "technical details, and a clear result."
         )
+
     else:
+
         feedback = (
-            "Your answer needs more detail. Try using the STAR structure "
-            "(Situation, Task, Action, Result) and include a specific example."
+            "Your answer needs more detail. "
+            "Try using the STAR structure "
+            "(Situation, Task, Action, Result) "
+            "and include a specific example."
         )
 
     return {
@@ -1643,21 +1827,30 @@ def delete_resume(
     resume_id: int,
     current_user_id: int = Depends(get_current_user)
 ):
+
     try:
+
         with engine.connect() as connection:
+
             owner = connection.execute(
                 text("""
                     SELECT user_id
                     FROM resumes
                     WHERE id = :resume_id
                 """),
-                {"resume_id": resume_id}
+                {
+                    "resume_id": resume_id
+                }
             ).fetchone()
 
             if owner is None:
-                return {"message": "Resume not found."}
+
+                return {
+                    "message": "Resume not found."
+                }
 
             if owner.user_id != current_user_id:
+
                 raise HTTPException(
                     status_code=403,
                     detail="You are not allowed to delete this resume."
@@ -1674,6 +1867,7 @@ def delete_resume(
                     "user_id": current_user_id
                 }
             )
+
             connection.commit()
 
         return {
@@ -1683,11 +1877,15 @@ def delete_resume(
 
     except HTTPException:
         raise
+
     except Exception as error:
-        print("Delete resume error:", error)
+
+        print(
+            "Delete resume error:",
+            error
+        )
+
         return {
             "message": "Failed to delete resume.",
             "error": str(error)
         }
-
-
